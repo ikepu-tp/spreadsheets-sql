@@ -49,6 +49,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	setSheetByName(sheetName: string): this {
+		if (!this.spreadSheet) throw new Error('SpreadSheet not found');
 		const sheet = this.spreadSheet.getSheetByName(sheetName);
 		if (!sheet) throw new Error(`Sheet ${sheetName} not found`);
 		this.sheet = sheet;
