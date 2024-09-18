@@ -11,8 +11,9 @@ class SQL {
 
 	rowId: number = 0;
 
-	constructor(spreadSheetId = null) {
-		if (this.spreadSheetId !== null) this.getSpreadById(spreadSheetId as unknown as string);
+	constructor(spreadSheetId: string | null = null, sheetName: string | null = null) {
+		if (spreadSheetId) this.getSpreadById(spreadSheetId);
+		if (sheetName) this.setSheetByName(sheetName);
 	}
 
 	/**
