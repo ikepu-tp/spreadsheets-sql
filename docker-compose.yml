@@ -1,0 +1,8 @@
+version: '3'
+services:
+  clasp:
+    build: .
+    tty: true
+    volumes:
+      - './:/opt/src'
+    working_dir: '/opt/src'
