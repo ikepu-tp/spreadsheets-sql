@@ -202,6 +202,7 @@ class SQL {
 		} else {
 			// insert
 			this.rowId = this.Spreadsheet.getLastRow() + 1;
+			if (!this.fillData[this.getKeyName()]) this.fillData[this.getKeyName()] = this.rowId;
 		}
 		this.Spreadsheet.setValues(this.rowId, [this.convertRecordToData(this.fillData)]);
 		return false;
