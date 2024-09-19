@@ -58,7 +58,7 @@ class Spreadsheet {
 	 * @return {*}  {string[]}
 	 * @memberof Spreadsheet
 	 */
-	getColumns(): string[] {
+	private getColumns(): string[] {
 		if (!this.columns.length) {
 			const values = this.sheet.getRange(1, 1, 1, this.sheet.getLastColumn()).getValues();
 			this.columns = values[0];
