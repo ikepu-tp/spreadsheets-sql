@@ -111,20 +111,25 @@ class SQL {
 		let values = this.Spreadsheet.getValues();
 		//配列の変換
 		const datas = values
-			.map((value) => {
-				return this.convertDataToRecord(value);
-			})
+			.map((value) => this.convertDataToRecord(value))
 			.filter((data) => {
 				// where
 				if (Object.keys(this.sqlWhere).some((key) => data[key] !== this.sqlWhere[key])) return false;
 
 				//orWhere
-				if (!Object.keys(this.sqlOrWhere).some((key) => data[key] === this.sqlWhere[key])) return false;
+				if (!Object.keys(this.sqlOrWhere).some((key) => data[key] === this.sqlOrWhere[key])) return false;
 
 				// whereIn
 				if (this.sqlWhereIn.some((whereIn) => !whereIn.values.includes(data[whereIn.column]))) return false;
 
 				return true;
+			})
+			.map((data) => {
+				const record: RecordType = {};
+				this.sqlSelect.forEach((column) => {
+					if (data[column] !== undefined) record[column] = data[column];
+				});
+				return record;
 			});
 		return datas;
 	}
