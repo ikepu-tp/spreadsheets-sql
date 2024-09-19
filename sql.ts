@@ -1,8 +1,6 @@
 type RecordType = { [key: string]: string | number };
 class SQL {
-	spreadSheetId: string;
-	spreadSheet: GoogleAppsScript.Spreadsheet.Spreadsheet;
-	sheet: GoogleAppsScript.Spreadsheet.Sheet;
+	Spreadsheet: Spreadsheet;
 
 	sqlSelect: string[] = [];
 	sqlWhere: RecordType = {};
@@ -25,8 +23,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	getSpreadById(spreadSheetId: string): this {
-		this.spreadSheetId = spreadSheetId;
-		this.spreadSheet = SpreadsheetApp.openById(spreadSheetId);
+		this.Spreadsheet = new Spreadsheet(spreadSheetId);
 		return this;
 	}
 
@@ -38,8 +35,8 @@ class SQL {
 	 * @memberof SQL
 	 */
 	getSpreadByUrl(spreadSheetUrl: string): this {
-		this.spreadSheet = SpreadsheetApp.openByUrl(spreadSheetUrl);
-		this.spreadSheetId = this.spreadSheet.getId();
+		this.Spreadsheet = new Spreadsheet();
+		this.Spreadsheet.getSpreadByUrl(spreadSheetUrl);
 		return this;
 	}
 
@@ -51,10 +48,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	setSheetByName(sheetName: string): this {
-		if (!this.spreadSheet) throw new Error('SpreadSheet not found');
-		const sheet = this.spreadSheet.getSheetByName(sheetName);
-		if (!sheet) throw new Error(`Sheet ${sheetName} not found`);
-		this.sheet = sheet;
+		this.Spreadsheet.setSheetByName(sheetName);
 		return this;
 	}
 
