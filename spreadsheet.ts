@@ -67,6 +67,22 @@ class Spreadsheet {
 	}
 
 	/**
+	 * Get Row by Key
+	 *
+	 * @param {(string | number)} key
+	 * @param {number} [column=0]
+	 * @return {*}  {number}
+	 * @memberof Spreadsheet
+	 */
+	getRowByKey(key: string | number, column: number = 0): number {
+		const values = this.getValues();
+		for (let i = 0; i < values.length; i++) {
+			if (values[i][column] === key) return i + 1;
+		}
+		throw new Error(`Key ${key} not found`);
+	}
+
+	/**
 	 * Get Last Row
 	 *
 	 * @return {*}  {number}

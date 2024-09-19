@@ -2,6 +2,8 @@ type RecordType = { [key: string]: string | number };
 class SQL {
 	Spreadsheet: Spreadsheet;
 
+	keyName: string;
+
 	sqlSelect: string[] = [];
 	sqlWhere: RecordType = {};
 	sqlOrWhere: RecordType = {};
@@ -49,6 +51,31 @@ class SQL {
 	 */
 	setSheetByName(sheetName: string): this {
 		this.Spreadsheet.setSheetByName(sheetName);
+		return this;
+	}
+
+	/**
+	 * Get Columns
+	 *
+	 * @return {*}  {string}
+	 * @memberof SQL
+	 */
+	getKeyName(): string {
+		if (!this.keyName) {
+			this.keyName = this.Spreadsheet.columns[0];
+		}
+		return this.keyName;
+	}
+
+	/**
+	 * Set Key Name
+	 *
+	 * @param {string} keyName
+	 * @return {*}  {this}
+	 * @memberof SQL
+	 */
+	setKeyName(keyName: string): this {
+		this.keyName = keyName;
 		return this;
 	}
 
@@ -140,9 +167,14 @@ class SQL {
 	 * @return {*}  {*}
 	 * @memberof SQL
 	 */
-	first(): any {
-		this.rowId = 0;
-		return {};
+	first(): RecordType | null {
+		const res = this.get();
+		if (res.length === 0) return null;
+		this.rowId = this.Spreadsheet.getRowByKey(
+			res[0][this.getKeyName()],
+			this.Spreadsheet.columns.indexOf(this.getKeyName())
+		);
+		return res[0];
 	}
 
 	/**
