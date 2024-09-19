@@ -5,5 +5,8 @@
 	},
 	"scripts": {
 		"format": "prettier -w \"**/*.{js,ts,tsx}\""
+	},
+	"devDependencies": {
+		"typescript": "^5.6.2"
 	}
 }

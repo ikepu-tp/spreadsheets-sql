@@ -138,7 +138,7 @@ class SQL {
 		let values = this.Spreadsheet.getValues();
 
 		//配列の変換
-		const datas = values
+		let datas = values
 			.splice(1)
 			.map((value) => this.convertDataToRecord(value))
 			.filter((data) => {
@@ -152,8 +152,11 @@ class SQL {
 				if (this.sqlWhereIn.some((whereIn) => !whereIn.values.includes(data[whereIn.column]))) return false;
 
 				return true;
-			})
-			.map((data) => {
+			});
+
+		//select
+		if (this.sqlSelect.length > 0)
+			datas = datas.map((data) => {
 				const record: RecordType = {};
 				this.sqlSelect.forEach((column) => {
 					if (data[column] !== undefined) record[column] = data[column];

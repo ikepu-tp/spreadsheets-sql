@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"baseUrl": ".",
+		"target": "es6",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": true,
+		"module": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"jsx": "react-jsx",
+		"paths": {
+			"~/*": ["resources/front/*"],
+			"functions/*": ["resources/front/functions/*"],
+			"models/*": ["resources/front/models/*"],
+			"components/*": ["resources/front/components/*"]
+		}
+	},
+	"include": ["resources/front"],
+	"exclude": [],
+	"references": [{ "path": "./tsconfig.node.json" }]
+}
