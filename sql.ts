@@ -108,7 +108,25 @@ class SQL {
 	 * @memberof SQL
 	 */
 	get(): RecordType[] {
-		return [];
+		let values = this.Spreadsheet.getValues();
+		//配列の変換
+		const datas = values
+			.map((value) => {
+				return this.convertDataToRecord(value);
+			})
+			.filter((data) => {
+				// where
+				if (Object.keys(this.sqlWhere).some((key) => data[key] !== this.sqlWhere[key])) return false;
+
+				//orWhere
+				if (!Object.keys(this.sqlOrWhere).some((key) => data[key] === this.sqlWhere[key])) return false;
+
+				// whereIn
+				if (this.sqlWhereIn.some((whereIn) => !whereIn.values.includes(data[whereIn.column]))) return false;
+
+				return true;
+			});
+		return datas;
 	}
 
 	/**
@@ -145,8 +163,40 @@ class SQL {
 			// update
 		} else {
 			// insert
+			this.rowId = this.Spreadsheet.getLastRow() + 1;
 		}
+		this.Spreadsheet.setValues(this.rowId, [this.convertRecordToData(this.fillData)]);
 		return false;
+	}
+
+	/**
+	 * Convert Record to Data
+	 *
+	 * @param {RecordType} record
+	 * @return {*}  {any[]}
+	 * @memberof SQL
+	 */
+	convertRecordToData(record: RecordType): any[] {
+		const data: any[] = [];
+		this.Spreadsheet.columns.forEach((column) => {
+			data.push(record[column] || '');
+		});
+		return data;
+	}
+
+	/**
+	 * Convert Data to Record
+	 *
+	 * @param {any[]} data
+	 * @return {*}  {RecordType}
+	 * @memberof SQL
+	 */
+	convertDataToRecord(data: any[]): RecordType {
+		const record: RecordType = {};
+		this.Spreadsheet.columns.forEach((column, index) => {
+			record[column] = data[index];
+		});
+		return record;
 	}
 }
 
