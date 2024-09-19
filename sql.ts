@@ -10,6 +10,7 @@ class SQL {
 	sqlWhereIn: { column: string; values: (string | number)[] }[] = [];
 
 	rowId: number = 0;
+	fillData: RecordType = {};
 
 	constructor(spreadSheetId: string | null = null, sheetName: string | null = null) {
 		if (spreadSheetId) this.getSpreadById(spreadSheetId);
@@ -65,6 +66,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	select(columns: string[]): this {
+		this.sqlSelect = columns;
 		return this;
 	}
 
@@ -76,6 +78,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	where(wheres: RecordType): this {
+		this.sqlWhere = wheres;
 		return this;
 	}
 
@@ -87,6 +90,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	orWhere(wheres: RecordType): this {
+		this.sqlOrWhere = wheres;
 		return this;
 	}
 
@@ -99,6 +103,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	whereIn(column: string, values: (string | number)[]): this {
+		this.sqlWhereIn.push({ column, values });
 		return this;
 	}
 
@@ -131,6 +136,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	fill(data: RecordType): this {
+		this.fillData = data;
 		return this;
 	}
 
