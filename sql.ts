@@ -169,6 +169,7 @@ class SQL {
 	 */
 	first(): RecordType | null {
 		const res = this.get();
+		this.rowId = 0;
 		if (res.length === 0) return null;
 		this.rowId = this.Spreadsheet.getRowByKey(
 			res[0][this.getKeyName()],
