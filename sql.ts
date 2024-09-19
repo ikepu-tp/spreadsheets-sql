@@ -136,8 +136,10 @@ class SQL {
 	 */
 	get(): RecordType[] {
 		let values = this.Spreadsheet.getValues();
+
 		//配列の変換
 		const datas = values
+			.splice(1)
 			.map((value) => this.convertDataToRecord(value))
 			.filter((data) => {
 				// where
