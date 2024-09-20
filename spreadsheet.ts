@@ -1,10 +1,35 @@
+/**
+ * @class
+ */
 class Spreadsheet {
-	spreadSheetId: string;
-	spreadSheet: GoogleAppsScript.Spreadsheet.Spreadsheet;
-	sheet: GoogleAppsScript.Spreadsheet.Sheet;
+	/**
+	 * @type {string}
+	 * @memberof Spreadsheet
+	 */
+	spreadSheetId: string = '';
 
+	/**
+	 * @type {GoogleAppsScript.Spreadsheet.Spreadsheet}
+	 * @memberof Spreadsheet
+	 */
+	spreadSheet: GoogleAppsScript.Spreadsheet.Spreadsheet | undefined;
+
+	/**
+	 * @type {GoogleAppsScript.Spreadsheet.Sheet}
+	 * @memberof Spreadsheet
+	 */
+	sheet: GoogleAppsScript.Spreadsheet.Sheet | undefined;
+
+	/**
+	 * @type {string[]}
+	 * @memberof Spreadsheet
+	 */
 	columns: string[] = [];
 
+	/**
+	 * @param spreadSheetId
+	 * @param sheetName
+	 */
 	constructor(spreadSheetId: string | null = null, sheetName: string | null = null) {
 		if (spreadSheetId) this.getSpreadById(spreadSheetId);
 		if (sheetName) this.setSheetByName(sheetName);
@@ -59,6 +84,7 @@ class Spreadsheet {
 	 * @memberof Spreadsheet
 	 */
 	private getColumns(): string[] {
+		if (!this.sheet) throw new Error('Spreadsheet not found');
 		if (!this.columns.length) {
 			const values = this.sheet.getRange(1, 1, 1, this.sheet.getLastColumn()).getValues();
 			this.columns = values[0];
@@ -89,6 +115,7 @@ class Spreadsheet {
 	 * @memberof Spreadsheet
 	 */
 	getLastRow(): number {
+		if (!this.sheet) throw new Error('Spreadsheet not found');
 		const rows = this.sheet.getRange('A:A').getValues(); //A列の値を全て取得
 		return rows.filter(String).length; //空白の要素を除いた長さを取得
 	}
@@ -100,6 +127,7 @@ class Spreadsheet {
 	 * @memberof Spreadsheet
 	 */
 	getValues(): any[][] {
+		if (!this.sheet) throw new Error('Spreadsheet not found');
 		return this.sheet.getDataRange().getValues();
 	}
 
@@ -111,6 +139,7 @@ class Spreadsheet {
 	 * @memberof Spreadsheet
 	 */
 	setValues(rowId: number, values: any[][]): void {
+		if (!this.sheet) throw new Error('Spreadsheet not found');
 		this.sheet.getRange(rowId, 1, values.length, values[0].length).setValues(values);
 	}
 }

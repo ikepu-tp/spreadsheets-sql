@@ -1,18 +1,59 @@
 type RecordType = { [key: string]: string | number };
 
+/**
+ * @class SQL
+ * @public
+ */
 class SQL {
-	Spreadsheet: Spreadsheet;
+	/**
+	 * @type {Spreadsheet}
+	 * @memberof SQL
+	 */
+	Spreadsheet: Spreadsheet = new Spreadsheet();
 
-	keyName: string;
+	/**
+	 * @type {string}
+	 * @memberof SQL
+	 */
+	keyName: string = '';
 
+	/**
+	 * @type {string[]}
+	 * @memberof SQL
+	 */
 	sqlSelect: string[] = [];
+
+	/**
+	 * @type {RecordType}
+	 * @memberof SQL
+	 */
 	sqlWhere: RecordType = {};
+
+	/**
+	 * @type {RecordType}
+	 * @memberof SQL
+	 */
 	sqlOrWhere: RecordType = {};
+
+	/**
+	 *
+	 *  @type {({ column: string; values: (string | number)[] }[])}
+	 * @memberof SQL
+	 */
 	sqlWhereIn: { column: string; values: (string | number)[] }[] = [];
 
 	rowId: number = 0;
+	/**
+	 * @type {RecordType}
+	 * @memberof SQL
+	 */
 	fillData: RecordType = {};
 
+	/**
+	 * @param {string | null} spreadSheetId
+	 * @param {string | null } sheetName
+	 * @memberof SQL
+	 */
 	constructor(spreadSheetId: string | null = null, sheetName: string | null = null) {
 		if (spreadSheetId) this.getSpreadById(spreadSheetId);
 		if (sheetName) this.setSheetByName(sheetName);
@@ -245,4 +286,14 @@ class SQL {
 	}
 }
 
-var Sql = SQL;
+var Sql: typeof SQL = SQL;
+
+/**
+ *
+ * @param {string | null} spreadSheetId
+ * @param {string | null} sheetName
+ * @return {*} {SQL}
+ */
+function createSql(spreadSheetId: string | null = null, sheetName: string | null = null): SQL {
+	return new Sql(spreadSheetId, sheetName);
+}
