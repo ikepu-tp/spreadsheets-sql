@@ -9,7 +9,7 @@ class SQL {
 	 * @type {Spreadsheet}
 	 * @memberof SQL
 	 */
-	Spreadsheet: Spreadsheet = new Spreadsheet();
+	Spreadsheet: Spreadsheet = new SpreadSheet();
 
 	/**
 	 * @type {string}
@@ -67,7 +67,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	getSpreadById(spreadSheetId: string): this {
-		this.Spreadsheet = new Spreadsheet(spreadSheetId);
+		this.Spreadsheet = new SpreadSheet(spreadSheetId);
 		return this;
 	}
 
@@ -79,7 +79,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	getSpreadByUrl(spreadSheetUrl: string): this {
-		this.Spreadsheet = new Spreadsheet();
+		this.Spreadsheet = new SpreadSheet();
 		this.Spreadsheet.getSpreadByUrl(spreadSheetUrl);
 		return this;
 	}
@@ -287,13 +287,3 @@ class SQL {
 }
 
 var Sql: typeof SQL = SQL;
-
-/**
- *
- * @param {string | null} spreadSheetId
- * @param {string | null} sheetName
- * @return {*} {SQL}
- */
-function createSql(spreadSheetId: string | null = null, sheetName: string | null = null): SQL {
-	return new Sql(spreadSheetId, sheetName);
-}
