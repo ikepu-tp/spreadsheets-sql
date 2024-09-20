@@ -1,6 +1,7 @@
-FROM node:20-lts
+FROM node:20
 
-RUN apt update && apt install curl
+RUN apt update
+RUN apt install curl
 
 RUN npm -v
 
