@@ -115,4 +115,4 @@ class Spreadsheet {
 	}
 }
 
-this.spreadsheet = Spreadsheet;
+var SpreadSheet = Spreadsheet;

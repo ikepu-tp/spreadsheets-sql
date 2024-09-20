@@ -1,4 +1,5 @@
 type RecordType = { [key: string]: string | number };
+
 class SQL {
 	Spreadsheet: Spreadsheet;
 
@@ -244,4 +245,4 @@ class SQL {
 	}
 }
 
-this.sql = SQL;
+var Sql = SQL;
