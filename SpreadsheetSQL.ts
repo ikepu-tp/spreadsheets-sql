@@ -138,6 +138,14 @@ function save(): boolean {
 	throw new Error('This is a mock function for JSDoc.');
 }
 /**
+ * Delete Record
+ *
+ * @return {*}  {void}
+ */
+function deleteRecord(): void {
+	throw new Error('This is a mock function for JSDoc.');
+}
+/**
  * Convert Record to Data
  *
  * @param {RecordType} record

@@ -142,6 +142,20 @@ class Spreadsheet {
 		if (!this.sheet) throw new Error('Spreadsheet not found');
 		this.sheet.getRange(rowId, 1, values.length, values[0].length).setValues(values);
 	}
+
+	/**
+	 * delete Rows
+	 *
+	 * @param {number} rowId
+	 * @param {number} [rows=1]
+	 * @param {number} [columns=0]
+	 * @memberof Spreadsheet
+	 */
+	deleteRows(rowId: number, rows: number = 1): void {
+		if (!this.sheet) throw new Error('Spreadsheet not found');
+		if (rowId < 1 || rows < 1 || rowId + rows - 1 > this.getLastRow()) throw new Error('Invalid rows');
+		this.sheet.deleteRows(rowId, rows);
+	}
 }
 
 var SpreadSheetClass: typeof Spreadsheet = Spreadsheet;

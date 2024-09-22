@@ -7,52 +7,44 @@ type RecordType = { [key: string]: string | number };
 class SQL_ {
 	/**
 	 * @type {Spreadsheet}
-	 * @memberof SQL
 	 */
 	Spreadsheet: Spreadsheet = new Spreadsheet();
 
 	/**
 	 * @type {string}
-	 * @memberof SQL
 	 */
 	keyName: string = '';
 
 	/**
 	 * @type {string[]}
-	 * @memberof SQL
 	 */
 	sqlSelect: string[] = [];
 
 	/**
 	 * @type {RecordType}
-	 * @memberof SQL
 	 */
 	sqlWhere: RecordType = {};
 
 	/**
 	 * @type {RecordType}
-	 * @memberof SQL
 	 */
 	sqlOrWhere: RecordType = {};
 
 	/**
 	 *
 	 *  @type {({ column: string; values: (string | number)[] }[])}
-	 * @memberof SQL
 	 */
 	sqlWhereIn: { column: string; values: (string | number)[] }[] = [];
 
 	rowId: number = 0;
 	/**
 	 * @type {RecordType}
-	 * @memberof SQL
 	 */
 	fillData: RecordType = {};
 
 	/**
 	 * @param {string | null} spreadSheetId
 	 * @param {string | null } sheetName
-	 * @memberof SQL
 	 */
 	constructor(spreadSheetId: string | null = null, sheetName: string | null = null) {
 		if (spreadSheetId) this.getSpreadById(spreadSheetId);
@@ -64,7 +56,6 @@ class SQL_ {
 	 *
 	 * @param {string} spreadSheetId
 	 * @return {*}  {this}
-	 * @memberof SQL
 	 */
 	getSpreadById(spreadSheetId: string): this {
 		this.Spreadsheet = new Spreadsheet(spreadSheetId);
@@ -76,7 +67,6 @@ class SQL_ {
 	 *
 	 * @param {string} spreadSheetUrl
 	 * @return {*}  {this}
-	 * @memberof SQL
 	 */
 	getSpreadByUrl(spreadSheetUrl: string): this {
 		this.Spreadsheet = new Spreadsheet();
@@ -89,7 +79,6 @@ class SQL_ {
 	 *
 	 * @param {string} sheetName
 	 * @return {*}  {this}
-	 * @memberof SQL
 	 */
 	setSheetByName(sheetName: string): this {
 		this.Spreadsheet.setSheetByName(sheetName);
@@ -100,7 +89,6 @@ class SQL_ {
 	 * Get Columns
 	 *
 	 * @return {*}  {string}
-	 * @memberof SQL
 	 */
 	getKeyName(): string {
 		if (!this.keyName) {
@@ -114,7 +102,6 @@ class SQL_ {
 	 *
 	 * @param {string} keyName
 	 * @return {*}  {this}
-	 * @memberof SQL
 	 */
 	setKeyName(keyName: string): this {
 		this.keyName = keyName;
@@ -126,7 +113,6 @@ class SQL_ {
 	 *
 	 * @param {string[]} columns
 	 * @return {*}  {this}
-	 * @memberof SQL
 	 */
 	select(columns: string[]): this {
 		this.sqlSelect = columns;
@@ -138,7 +124,6 @@ class SQL_ {
 	 *
 	 * @param {RecordType} wheres
 	 * @return {*}  {this}
-	 * @memberof SQL
 	 */
 	where(wheres: RecordType): this {
 		this.sqlWhere = wheres;
@@ -150,7 +135,6 @@ class SQL_ {
 	 *
 	 * @param {RecordType} wheres
 	 * @return {*}  {this}
-	 * @memberof SQL
 	 */
 	orWhere(wheres: RecordType): this {
 		this.sqlOrWhere = wheres;
@@ -163,7 +147,6 @@ class SQL_ {
 	 * @param {string} column
 	 * @param {((string | number)[])} values
 	 * @return {*}  {this}
-	 * @memberof SQL
 	 */
 	whereIn(column: string, values: (string | number)[]): this {
 		this.sqlWhereIn.push({ column, values });
@@ -174,7 +157,6 @@ class SQL_ {
 	 * Get Records
 	 *
 	 * @return {*}  {RecordType[]}
-	 * @memberof SQL
 	 */
 	get(): RecordType[] {
 		let values = this.Spreadsheet.getValues();
@@ -212,7 +194,6 @@ class SQL_ {
 	 * Get First Record
 	 *
 	 * @return {*}  {*}
-	 * @memberof SQL
 	 */
 	first(): RecordType | null {
 		const res = this.get();
@@ -230,7 +211,6 @@ class SQL_ {
 	 *
 	 * @param {RecordType} data
 	 * @return {*}  {this}
-	 * @memberof SQL
 	 */
 	fill(data: RecordType): this {
 		this.fillData = data;
@@ -241,18 +221,24 @@ class SQL_ {
 	 * Save Record
 	 *
 	 * @return {*}  {boolean}
-	 * @memberof SQL
 	 */
-	save(): boolean {
-		if (this.rowId) {
-			// update
-		} else {
+	save(): void {
+		if (!this.rowId) {
 			// insert
 			this.rowId = this.Spreadsheet.getLastRow() + 1;
 			if (!this.fillData[this.getKeyName()]) this.fillData[this.getKeyName()] = this.rowId;
 		}
 		this.Spreadsheet.setValues(this.rowId, [this.convertRecordToData(this.fillData)]);
-		return false;
+	}
+
+	/**
+	 * Delete Record
+	 *
+	 * @return {*}  {void}
+	 */
+	deleteRecord(): void {
+		if (!this.rowId) throw new Error('RowId not found');
+		this.Spreadsheet.deleteRows(this.rowId, 1);
 	}
 
 	/**
@@ -260,7 +246,6 @@ class SQL_ {
 	 *
 	 * @param {RecordType} record
 	 * @return {*}  {any[]}
-	 * @memberof SQL
 	 */
 	convertRecordToData(record: RecordType): any[] {
 		const data: any[] = [];
@@ -275,7 +260,6 @@ class SQL_ {
 	 *
 	 * @param {any[]} data
 	 * @return {*}  {RecordType}
-	 * @memberof SQL
 	 */
 	convertDataToRecord(data: any[]): RecordType {
 		const record: RecordType = {};
