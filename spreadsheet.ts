@@ -144,4 +144,4 @@ class Spreadsheet {
 	}
 }
 
-var SpreadSheet: typeof Spreadsheet = Spreadsheet;
+var SpreadSheetClass: typeof Spreadsheet = Spreadsheet;

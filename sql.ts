@@ -4,12 +4,12 @@ type RecordType = { [key: string]: string | number };
  * @class SQL
  * @public
  */
-class SQL {
+class SQL_ {
 	/**
 	 * @type {Spreadsheet}
 	 * @memberof SQL
 	 */
-	Spreadsheet: Spreadsheet = new SpreadSheet();
+	Spreadsheet: Spreadsheet = new Spreadsheet();
 
 	/**
 	 * @type {string}
@@ -67,7 +67,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	getSpreadById(spreadSheetId: string): this {
-		this.Spreadsheet = new SpreadSheet(spreadSheetId);
+		this.Spreadsheet = new Spreadsheet(spreadSheetId);
 		return this;
 	}
 
@@ -79,7 +79,7 @@ class SQL {
 	 * @memberof SQL
 	 */
 	getSpreadByUrl(spreadSheetUrl: string): this {
-		this.Spreadsheet = new SpreadSheet();
+		this.Spreadsheet = new Spreadsheet();
 		this.Spreadsheet.getSpreadByUrl(spreadSheetUrl);
 		return this;
 	}
@@ -286,4 +286,4 @@ class SQL {
 	}
 }
 
-var Sql: typeof SQL = SQL;
+var SqlClass: typeof SQL_ = SQL_;
