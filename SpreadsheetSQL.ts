@@ -118,6 +118,24 @@ function get(): RecordType[] {
 function first(): RecordType | null {
 	throw new Error('This is a mock function for JSDoc.');
 }
+/**
+ * Get Last Record
+ *
+ * @return {*}  {(RecordType | null)}
+ */
+function last(): RecordType | null {
+	throw new Error('This is a mock function for JSDoc.');
+}
+/**
+ * Find Record
+ *
+ * @param {(string | number)} key
+ * @param {(string | '')} keyName
+ * @return {*}  {(RecordType | null)}
+ */
+function find(key: string | number, keyName: string | ''): RecordType | null {
+	throw new Error('This is a mock function for JSDoc.');
+}
 
 /**
  * Fill Record

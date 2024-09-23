@@ -1,4 +1,6 @@
 type RecordType = { [key: string]: string | number };
+type OperatorType = '=' | '<' | '>' | '<=' | '>=' | '<>' | '!=';
+type WhereType = [string, OperatorType, string | number] | [string, string | number];
 
 /**
  * @class SQL
@@ -21,14 +23,14 @@ class SQL_ {
 	sqlSelect: string[] = [];
 
 	/**
-	 * @type {RecordType}
+	 * @type {WhereType[]}
 	 */
-	sqlWhere: RecordType = {};
+	sqlWhere: WhereType[] = [];
 
 	/**
-	 * @type {RecordType}
+	 * @type {WhereType[]}
 	 */
-	sqlOrWhere: RecordType = {};
+	sqlOrWhere: WhereType[] = [];
 
 	/**
 	 *
@@ -37,6 +39,10 @@ class SQL_ {
 	sqlWhereIn: { column: string; values: (string | number)[] }[] = [];
 
 	rowId: number = 0;
+	/**
+	 * @type {RecordType}
+	 */
+	rowData: RecordType = {};
 	/**
 	 * @type {RecordType}
 	 */
@@ -122,22 +128,36 @@ class SQL_ {
 	/**
 	 * Set Where Clause
 	 *
-	 * @param {RecordType} wheres
+	 * @param {WhereType[] | WhereType} wheres
 	 * @return {*}  {this}
 	 */
-	where(wheres: RecordType): this {
-		this.sqlWhere = wheres;
+	where(wheres: WhereType[] | WhereType): this {
+		if (wheres.length === 0) return this;
+
+		if (!Array.isArray(wheres[0])) {
+			this.sqlWhere.push(wheres as WhereType);
+		} else {
+			this.sqlWhere = this.sqlWhere.concat(wheres);
+		}
+
 		return this;
 	}
 
 	/**
 	 * Set Or Where Clause
 	 *
-	 * @param {RecordType} wheres
+	 * @param {WhereType[] | WhereType} wheres
 	 * @return {*}  {this}
 	 */
-	orWhere(wheres: RecordType): this {
-		this.sqlOrWhere = wheres;
+	orWhere(wheres: WhereType[] | WhereType): this {
+		if (wheres.length === 0) return this;
+
+		if (!Array.isArray(wheres[0])) {
+			this.sqlOrWhere.push(wheres as WhereType);
+		} else {
+			this.sqlOrWhere = this.sqlOrWhere.concat(wheres);
+		}
+
 		return this;
 	}
 
@@ -167,13 +187,19 @@ class SQL_ {
 			.map((value) => this.convertDataToRecord(value))
 			.filter((data) => {
 				// where
-				if (Object.keys(this.sqlWhere).some((key) => data[key] !== this.sqlWhere[key])) return false;
+				if (this.sqlWhere.length > 0 && !this.sqlWhere.every((condition) => this.evaluateCondition(data, condition)))
+					return false;
 
 				//orWhere
-				if (!Object.keys(this.sqlOrWhere).some((key) => data[key] === this.sqlOrWhere[key])) return false;
+				if (this.sqlOrWhere.length > 0 && !this.sqlOrWhere.some((condition) => this.evaluateCondition(data, condition)))
+					return false;
 
 				// whereIn
-				if (this.sqlWhereIn.some((whereIn) => !whereIn.values.includes(data[whereIn.column]))) return false;
+				if (
+					this.sqlWhereIn.length > 0 &&
+					!this.sqlWhereIn.every((whereIn) => whereIn.values.includes(data[whereIn.column]))
+				)
+					return false;
 
 				return true;
 			});
@@ -191,6 +217,47 @@ class SQL_ {
 	}
 
 	/**
+	 * Evaluate Condition
+	 *
+	 * @private
+	 * @param {RecordType} data
+	 * @param {WhereType} condition
+	 * @return {*}  {boolean}
+	 * @memberof SQL_
+	 */
+	private evaluateCondition(data: RecordType, condition: WhereType): boolean {
+		if (!Array.isArray(condition) || condition.length < 2 || condition.length > 3) {
+			throw new Error('Invalid condition.');
+		}
+
+		let [key, operatorOrValue, value] = condition;
+		const dataValue = data[key];
+
+		// 値だけ指定された場合（例: [key, value]）、等価（===）のチェックを行う
+		if (condition.length === 2) return dataValue === operatorOrValue;
+		value = value as string | number;
+
+		// オペレーターに基づいて適切な条件を適用
+		switch (operatorOrValue) {
+			case '=':
+				return dataValue === value;
+			case '<':
+				return dataValue < value;
+			case '>':
+				return dataValue > value;
+			case '<=':
+				return dataValue <= value;
+			case '>=':
+				return dataValue >= value;
+			case '!=':
+			case '<>':
+				return dataValue !== value;
+			default:
+				throw new Error('Invalid operator.');
+		}
+	}
+
+	/**
 	 * Get First Record
 	 *
 	 * @return {*}  {*}
@@ -203,7 +270,41 @@ class SQL_ {
 			res[0][this.getKeyName()],
 			this.Spreadsheet.columns.indexOf(this.getKeyName())
 		);
-		return res[0];
+		this.rowData = res[0];
+		return this.rowData;
+	}
+
+	/**
+	 * Get Last Record
+	 *
+	 * @return {*}  {(RecordType | null)}
+	 * @memberof SQL_
+	 */
+	last(): RecordType | null {
+		const res = this.get();
+		this.rowId = 0;
+		if (res.length === 0) return null;
+		const last = res.length - 1;
+		this.rowData = res[last];
+		this.rowId = this.Spreadsheet.getRowByKey(
+			this.rowData[this.getKeyName()],
+			this.Spreadsheet.columns.indexOf(this.getKeyName())
+		);
+		return this.rowData;
+	}
+
+	/**
+	 * Find Record
+	 *
+	 * @param {(string | number)} key
+	 * @param {(string | '')} keyName
+	 * @return {*}  {(RecordType | null)}
+	 * @memberof SQL_
+	 */
+	find(key: string | number, keyName: string = ''): RecordType | null {
+		if (keyName === '') keyName = this.getKeyName();
+		this.where([keyName, key]);
+		return this.first();
 	}
 
 	/**
@@ -226,9 +327,9 @@ class SQL_ {
 		if (!this.rowId) {
 			// insert
 			this.rowId = this.Spreadsheet.getLastRow() + 1;
-			if (!this.fillData[this.getKeyName()]) this.fillData[this.getKeyName()] = this.rowId;
+			if (!this.fillData[this.getKeyName()]) this.fillData[this.getKeyName()] = this.rowId - 1;
 		}
-		this.Spreadsheet.setValues(this.rowId, [this.convertRecordToData(this.fillData)]);
+		this.Spreadsheet.setValues(this.rowId, [this.convertRecordToData({ ...this.rowData, ...this.fillData })]);
 	}
 
 	/**
