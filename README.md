@@ -102,8 +102,6 @@ sql.whereIn(
 
 To select specific columns, use the `select` method:
 
-javascript
-
 ```javascript
 sql.select(["name", "age"]);
 ```
